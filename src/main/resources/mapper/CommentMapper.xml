@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.project.board.Repository.Comment.CommentRepository">
+
+    <select id="findByBOARDUID" resultType="com.project.board.web.Comment.dto.CommentDto" parameterType="map">
+        SELECT *
+        FROM Comment
+        WHERE board_uid = #{BOARD_UID}
+        ORDER BY comment_uid DESC
+        LIMIT #{pagingUtil.cntPerPage}
+        OFFSET #{pagingUtil.offsetVal}
+    </select>
+
+    <select id="findByCOMMENTUID" resultType="com.project.board.web.Comment.dto.CommentDto" parameterType="Long">
+        SELECT *
+        FROM Comment
+        WHERE comment_uid = #{COMMENT_UID}
+    </select>
+
+    <insert id="createComment" parameterType="com.project.board.web.Comment.dto.CreateCommentDto">
+        INSERT INTO Comment(board_uid, writer, content)
+        VALUES(#{BOARD_UID}, #{WRITER}, #{CONTENT})
+    </insert>
+
+    <update id="modifyComment" parameterType="com.project.board.web.Comment.dto.ModifyCommentDto">
+        UPDATE Comment
+        SET content = #{CONTENT}, modify_time = now()
+        WHERE comment_uid = #{COMMENT_UID}
+    </update>
+
+    <delete id="deleteComment" parameterType="com.project.board.web.Comment.dto.DeleteCommentDto">
+        DELETE
+        FROM Comment
+        WHERE comment_uid = #{COMMENT_UID}
+    </delete>
+
+    <select id="countComment" resultType="Integer">
+        SELECT COUNT(*)
+        FROM Comment
+        WHERE board_uid = #{BOARD_UID}
+    </select>
+
+</mapper>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+ 
+<mapper namespace="com.project.board.Repository.Board.BoardRepository">
+
+    <select id="getBoardList" resultType="com.project.board.web.Board.dto.BoardDto" parameterType="com.project.board.util.PagingUtil">
+        SELECT *
+        FROM Board
+        ORDER BY origin_no DESC, layer_no ASC
+        LIMIT #{cntPerPage}
+        OFFSET #{offsetVal}
+    </select>
+
+    <insert id="createBoard" parameterType="com.project.board.web.Board.dto.CreateBoardDto" useGeneratedKeys="true" keyProperty="board_uid">
+        INSERT INTO Board(writer_ip, writer, title, content, origin_no)
+        VALUES(#{WRITER_IP}, #{WRITER}, #{TITLE}, #{CONTENT}, #{ORIGIN_NO})
+        <selectKey keyProperty="ORIGIN_NO" resultType="Long" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+    
+    <insert id="createLayerBoard" parameterType="com.project.board.web.Board.dto.CreateLayerBoardDto">
+        {
+            call createLayerBoard(
+                #{WRITER, javaType=string, jdbcType=VARCHAR, mode=IN},
+                #{WRITER_IP, javaType=string, jdbcType=VARCHAR, mode=IN},
+                #{TITLE, javaType=string, jdbcType=VARCHAR, mode=IN},
+                #{CONTENT, javaType=string, jdbcType=VARCHAR, mode=IN},
+                #{ORIGIN_NO, javaType=long, jdbcType=INTEGER, mode=IN},
+                #{LAYER_NO, javaType=long, jdbcType=INTEGER, mode=IN},
+                #{LAYER_DEPTH, javaType=long, jdbcType=INTEGER, mode=IN},
+                #{PARENT_BOARD_UID, javaType=long, jdbcType=INTEGER, mode=IN}
+            )
+        }
+    </insert>
+
+    <update id="updateOriginBoard" parameterType="Long">
+        UPDATE Board
+        SET origin_no = #{ORIGIN_NO}
+        WHERE board_uid = #{ORIGIN_NO}
+    </update>
+
+    <update id="modifyBoard" parameterType="com.project.board.web.Board.dto.ModifyBoardDto">
+        UPDATE Board
+        SET title = #{TITLE}, content = #{CONTENT}, modify_time = now()
+        WHERE board_uid = #{BOARD_UID}
+    </update>
+
+    <delete id="deleteBoard" parameterType="Long">
+        WITH recursive cte (board_uid, parent_board_uid) as (
+            SELECT board_uid, parent_board_uid 
+            FROM ehdgjs.Board c
+            WHERE board_uid = #{board_uid}
+            UNION	
+            SELECT b.board_uid , b.parent_board_uid
+            FROM ehdgjs.Board b 
+            inner join cte
+                on b.parent_board_uid = cte.board_uid
+        )
+        DELETE
+        FROM Board
+        USING Board JOIN cte ON Board.board_uid = cte.board_uid
+    </delete>
+
+    <select id="getBoardByBoardUid" resultType="com.project.board.web.Board.dto.BoardDto" parameterType="Long">
+        SELECT *
+        FROM Board
+        WHERE board_uid = #{board_uid}
+    </select>
+
+    <select id="getBoardListByIp" resultType="com.project.board.web.Board.dto.BoardDto" parameterType="String">
+        SELECT *
+        FROM Board
+        WHERE writer_ip = #{userIp}
+        ORDER BY board_uid DESC LIMIT 3
+    </select>
+
+    <select id="findBoardCnt" resultType="Integer">
+        SELECT COUNT(*)
+        FROM Board
+    </select>
+
+</mapper>

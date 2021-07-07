@@ -1,0 +1,23 @@
+# mysql DB config
+spring:
+    datasource: 
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://localhost:3306/ehdgjs?serverTimezone=UTC&characterEncoding=UTF-8
+        username: ehdgjs
+        password: ehdgjs520
+
+# JSP config
+    mvc:
+        view:
+            prefix: /WEB-INF/jsp/
+            suffix: .jsp
+    output:
+        ansi:
+            enabled: always
+
+# Session 제한 시간
+server:
+    servlet:
+        session:
+            timeout: 10m
+

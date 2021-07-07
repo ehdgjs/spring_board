@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.project.board.Repository.User.UserRepository">
+
+    <select id="checkValidationId" resultType="com.project.board.web.User.dto.UserDto">
+        SELECT *
+        FROM User
+        WHERE user_id = #{USER_ID}
+    </select>
+
+    <select id="checkValidationNickName" resultType="com.project.board.web.User.dto.UserDto">
+        SELECT *
+        FROM User
+        WHERE nickname = #{NICKNAME}
+    </select>
+
+    <insert id="signUpUser" parameterType="com.project.board.web.User.dto.UserSignUpDto">
+        INSERT
+        INTO User (user_id, password, name, nickname)
+        VALUES (#{USER_ID}, #{PASSWORD}, #{NAME}, #{NICKNAME})
+    </insert>
+
+    <select id="findByUserId" parameterType="com.project.board.web.User.dto.UserLoginDto" resultType="com.project.board.web.User.dto.UserDto">
+        SELECT *
+        FROM User
+        WHERE user_id = #{USER_ID}
+    </select>
+
+    <update id="modifyPassword" parameterType="com.project.board.web.User.dto.ModifyUserDto">
+        UPDATE User
+        SET password = #{PASSWORD}
+        WHERE user_id = #{USER_ID}
+    </update>
+
+    <update id="modifyName" parameterType="com.project.board.web.User.dto.ModifyUserDto">
+        UPDATE User
+        SET name = #{NAME}
+        WHERE user_id = #{USER_ID}
+    </update>
+
+    <update id="modifyNickname" parameterType="com.project.board.web.User.dto.ModifyUserDto">
+        UPDATE User
+        SET nickname = #{NICKNAME}
+        WHERE user_id = #{USER_ID}
+    </update>
+
+    <delete id="deleteUser" parameterType="String">
+        DELETE
+        FROM User
+        WHERE user_id = #{USER_ID}
+    </delete>
+
+</mapper>

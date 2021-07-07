@@ -1,0 +1,22 @@
+version: '3.7'
+services: 
+    app:
+        build: 
+            context: .
+            dockerfile: ./Dockerfile
+        restart: always
+        ports: 
+            - 8080:8080
+        depends_on: 
+            - database
+
+    database:
+        image: mysql
+        ports:
+            - 3306:3306
+        restart: always
+        environment: 
+            MYSQL_ROOT_PASSWORD: 1234
+            MYSQL_DATABASE: ehdgjs
+            MYSQL_USER: ehdgjs
+            MYSQL_PASSWORD: ehdgjs520
